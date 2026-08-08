@@ -1,0 +1,81 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         String   // ADMIN, SALES, WAREHOUSE, ACCOUNTS
+  createdAt    DateTime @default(now())
+}
+
+model Customer {
+  id            Int            @id @default(autoincrement())
+  name          String
+  mobile        String
+  email         String
+  businessName  String
+  gstNumber     String?
+  type          String         // RETAIL, WHOLESALE, DISTRIBUTOR
+  address       String
+  status        String         // LEAD, ACTIVE, INACTIVE
+  followUpDate  DateTime?
+  notes         String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  followUpNotes FollowUpNote[]
+}
+
+model FollowUpNote {
+  id         Int      @id @default(autoincrement())
+  customerId Int
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  note       String
+  createdBy  String   // User name or email
+  createdAt  DateTime @default(now())
+}
+
+model Product {
+  id                Int             @id @default(autoincrement())
+  name              String
+  sku               String          @unique
+  category          String
+  unitPrice         Float
+  currentStock      Int
+  minStockAlert     Int
+  warehouseLocation String
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  stockMovements    StockMovement[]
+}
+
+model StockMovement {
+  id              Int      @id @default(autoincrement())
+  productId       Int
+  product         Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  quantityChanged Int
+  type            String   // IN, OUT
+  reason          String
+  createdBy       String   // User name or email
+  createdAt       DateTime @default(now())
+}
+
+model Challan {
+  id               Int      @id @default(autoincrement())
+  challanNumber    String   @unique
+  customerId       Int
+  totalQuantity    Int
+  status           String   // DRAFT, CONFIRMED, CANCELLED
+  createdBy        String   // User name or email
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  customerSnapshot Json     // Snapshot of Customer fields at time of creation
+  productsSnapshot Json     // Array of Product snapshots: [{ id, name, sku, unitPrice, quantity }]
+}
