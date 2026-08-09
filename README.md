@@ -143,6 +143,36 @@ Use these pre-seeded accounts to explore the role-based portals:
 
 ---
 
+## Environment Variable Management
+*   **Local Management**: Environment variables are kept in `.env` files located inside both `/backend` and `/frontend` folders. These are ignored by Git. Templates outlining key-value pairs are provided as `.env.example` in both directories.
+*   **Production Management**: Production variables are stored securely within the environment dashboards:
+    *   **Render**: Configure `DATABASE_URL` (Postgres connection string) and `JWT_SECRET` (session cryptographic key).
+    *   **Vercel**: Configure `VITE_API_URL` pointing to your live backend endpoint.
+
+---
+
+## Production Deployment Strategy
+
+1.  **Database Setup (Neon / Supabase)**:
+    *   Initialize a free Postgres cloud instance and copy its connection string (`DATABASE_URL`).
+2.  **Backend Web Service (Render)**:
+    *   Create a Web Service linked to the repository.
+    *   Set **Root Directory** to `backend`.
+    *   Configure **Build Command**: `npm install --include=dev && npx prisma generate && npx prisma migrate deploy && npm run db:seed && npm run build`
+    *   Configure **Start Command**: `node dist/index.js`
+3.  **Frontend Static Hosting (Vercel)**:
+    *   Link the project repository, set **Root Directory** to `frontend`, and configure `VITE_API_URL` in environment settings.
+    *   Deploy the project.
+
+---
+
+## Core Assumptions Made
+1.  **Port Configuration**: We assume port `5001` for the backend Express API instead of `5000` to prevent socket conflict warnings with AirPlay receiver services on macOS systems.
+2.  **Trust Authorization**: We assume local database trust authentication on port `5433` for rapid environment setup, while relying on standard PG SSL connection parameters in cloud hosting.
+3.  **Identity Access Management**: We assume that standard roles (`ADMIN`, `SALES`, `WAREHOUSE`, `ACCOUNTS`) are pre-seeded on database migrations for evaluator testing.
+
+---
+
 ## Known Limitations & Future Scope
 1. **Cloud Media Storage**: Product images are represented as text metadata / warehouse location labels. For production environments, integrating Amazon S3 or Cloudinary is recommended to host physical product images.
 2. **Server-Side PDF Generation**: Challans can be printed directly using browser standard print dialogs styled with customized print-media stylesheets. Utilizing a server-side PDF generator (like PDFKit or Puppeteer) for raw invoice downloads is a future enhancement.
