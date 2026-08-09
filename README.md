@@ -2,6 +2,12 @@
 
 A complete, high-performance, and visually stunning operations portal designed for wholesale/distribution businesses. This project integrates CRM customer profiling, inventory controls, warehouse logistics (stock movement log auditing), and sales checkout workflows (challan confirmation inventory deduction) in a modern single-page dashboard.
 
+## Placement Submission Details
+*   **GitHub Repository**: [Satish-devara/Fundsroom](https://github.com/Satish-devara/Fundsroom)
+*   **Live Frontend URL**: [Vercel Portal](https://fundsroom-sooty.vercel.app/)
+*   **Live Backend API URL**: [Render Web Service (Health Endpoint)](https://mini-erp-backend-w9f9.onrender.com/health)
+*   **API Testing Documentation**: Postman Collection JSON included in workspace root as `mini-erp.postman_collection.json`
+
 ---
 
 ## Technical Stack
@@ -134,3 +140,10 @@ Use these pre-seeded accounts to explore the role-based portals:
 *   `GET /api/challans/:id` - Fetch details with snapshots.
 *   `POST /api/challans` - Create Draft or Confirmed Challan. Check stock & decrement if Confirmed (Sales & Admin).
 *   `PUT /api/challans/:id/status` - Transition status: Draft -> Confirmed (decrements stock) or Confirmed -> Cancelled (restores stock) (Sales, Warehouse, Admin).
+
+---
+
+## Known Limitations & Future Scope
+1. **Cloud Media Storage**: Product images are represented as text metadata / warehouse location labels. For production environments, integrating Amazon S3 or Cloudinary is recommended to host physical product images.
+2. **Server-Side PDF Generation**: Challans can be printed directly using browser standard print dialogs styled with customized print-media stylesheets. Utilizing a server-side PDF generator (like PDFKit or Puppeteer) for raw invoice downloads is a future enhancement.
+3. **WebSockets for Real-time Alerts**: Low-stock alerts and CRM follow-up timelines update automatically on dashboard load/refresh. Integrating Socket.io would allow server-pushed notifications in real-time.
